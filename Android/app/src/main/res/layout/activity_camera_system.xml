@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".CameraSystem">
+
+
+    <!-- Custom view extending JavaCameraView -->
+    <com.nitramite.nitspec.ZoomCameraView
+        android:id="@+id/cameraOutputView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+
+    <!-- Bluetooth parameters -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="10dp"
+        tools:ignore="UseCompoundDrawables">
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/ic_bluetooth_icon"
+            tools:ignore="ContentDescription" />
+
+        <TextView
+            android:id="@+id/bluetoothConnectionStatusTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginEnd="5dp"
+            android:text="@string/camera_connecting_title"
+            android:textColor="@color/colorWhite"
+            android:typeface="monospace"
+            android:layout_gravity="bottom"
+            android:background="#000000" />
+
+    </LinearLayout>
+
+
+    <!-- Right corner menu button -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        tools:ignore="UseCompoundDrawables"
+        android:layout_gravity="end">
+
+        <Button
+            android:id="@+id/editParametersBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Params"
+            tools:ignore="ButtonStyle"
+            android:typeface="monospace" />
+
+    </LinearLayout>
+
+
+
+    <!-- Debugging -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="bottom">
+
+        <TextView
+            android:id="@+id/targetRangeTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginEnd="5dp"
+            android:text="Range..."
+            android:textColor="@color/colorWhite"
+            android:typeface="monospace"
+            android:background="#000000"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/scopeHardwareReadingsTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginEnd="5dp"
+            android:text="Readings..."
+            android:textColor="@color/colorWhite"
+            android:typeface="monospace"
+            android:background="#000000"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/currentModeTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginEnd="5dp"
+            android:text="Current mode..."
+            android:textColor="@color/colorWhite"
+            android:typeface="monospace"
+            android:background="#000000"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/debugParametersTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginEnd="5dp"
+            android:text="Debug params..."
+            android:textColor="@color/colorWhite"
+            android:typeface="monospace"
+            android:background="#000000"
+            android:textSize="12sp" />
+
+    </LinearLayout>
+
+
+    <!-- Adjust zoom level seekBar -->
+    <android.support.v7.widget.CardView
+        android:id="@+id/cameraZoomLevelSeekBarCard"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="20dp"
+        app:cardCornerRadius="2dp"
+        app:cardElevation="5dp"
+        android:layout_gravity="bottom|center"
+        android:background="@color/bootStrapSuccess"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="5dp"
+            android:gravity="center">
+
+            <SeekBar
+                android:id="@+id/cameraZoomLevelSeekBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="200dp"/>
+
+            <Button
+                android:id="@+id/cameraZoomLevelDismissBtn"
+                style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorAccent"
+                android:textSize="12sp"
+                android:text="close"
+                android:typeface="monospace" />
+
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
+
+
+
+    <!-- Adjust night vision gamma level seekBar -->
+    <android.support.v7.widget.CardView
+        android:id="@+id/gammaLevelAdjustCard"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="20dp"
+        app:cardCornerRadius="2dp"
+        app:cardElevation="5dp"
+        android:layout_gravity="bottom|center"
+        android:background="@color/bootStrapSuccess"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="5dp"
+            android:gravity="center">
+
+            <Button
+                android:id="@+id/gammaLevelDecrementBtn"
+                style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorAccent"
+                android:textSize="12sp"
+                android:text="-"
+                android:typeface="monospace" />
+
+            <TextView
+                android:id="@+id/gammaLevelTV"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:text="1.0"
+                android:typeface="monospace"
+                android:textSize="20dp"
+                android:textAlignment="center"
+                android:textColor="@color/colorAccent"/>
+
+            <Button
+                android:id="@+id/gammaLevelIncrementBtn"
+                style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorAccent"
+                android:textSize="12sp"
+                android:text="+"
+                android:typeface="monospace" />
+
+            <Button
+                android:id="@+id/gammaLevelDismissBtn"
+                style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorAccent"
+                android:textSize="12sp"
+                android:text="close"
+                android:typeface="monospace" />
+
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
+
+
+
+
+    <!-- Manual target range adjust wheel -->
+    <com.nitramite.libraries.horizontalwheelview.HorizontalWheelView
+        android:id="@+id/manualTargetRangeAdjustWheel"
+        android:layout_width="300dp"
+        android:layout_height="64dp"
+        android:paddingBottom="32dp"
+        app:activeColor="@color/yellow"
+        app:normalColor="@color/white"
+        app:showActiveRange="false"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="20dp"
+        android:layout_gravity="bottom|center">
+
+    </com.nitramite.libraries.horizontalwheelview.HorizontalWheelView>
+
+
+
+    <!-- Buttons -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="bottom|end"
+        android:gravity="bottom">
+
+        <Button
+            android:id="@+id/selectTargetBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Target"
+            tools:ignore="ButtonStyle"
+            android:typeface="monospace" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/zeroAngleSensorBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Zeroing"
+                tools:ignore="ButtonStyle"
+                android:typeface="monospace" />
+
+            <Button
+                android:id="@+id/toggleNightVisionBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Vision"
+                tools:ignore="ButtonStyle"
+                android:typeface="monospace"
+                android:visibility="gone"/>
+
+            <Button
+                android:id="@+id/pullTriggerEventBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Trigger"
+                tools:ignore="ButtonStyle"
+                android:typeface="monospace" />
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</FrameLayout>

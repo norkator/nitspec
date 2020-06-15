@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Application main colors -->
+    <color name="colorPrimary">#008577</color>
+    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorAccent">#347bb7</color>
+    <color name="colorWhite">#ffffff</color>
+    <color name="colorBlack">#000000</color>
+    <color name="shootBtnColor">#C43B3B</color>
+
+    <!-- Manual target range adjust wheel -->
+    <color name="yellow">#ffc107</color>
+    <color name="white">#ffffff</color>
+
+    <!-- Bootstrap like color -->
+    <color name="bootStrapPrimary">#347bb7</color>
+    <color name="bootStrapSuccess">#5db85d</color>
+    <color name="bootStrapInfo">#5cc0de</color>
+    <color name="bootStrapDanger">#dc3646</color>
+    <color name="bootStrapWarning">#ffc109</color>
+
+</resources>
