@@ -1,0 +1,4 @@
+# Eclipse
+.metadata
+.recommenders
+./Tests/bin/.gitignore
