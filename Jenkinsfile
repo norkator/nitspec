@@ -46,7 +46,7 @@ pipeline {
 
             // Sign bundle
             withCredentials([string(credentialsId: 'nitspec-signing-password', variable: 'nitspec-signing-password')]) {
-                bat 'jarsigner -verbose -keystore %KEYSTORE_LOCATION% %WORKSPACE%\\app\\build\\outputs\\bundle\\release\\app-release.aab Nitramite --storepass "%nitspec-signing-password%"'
+                bat 'jarsigner -verbose -keystore %KEYSTORE_LOCATION% %WORKSPACE%\\Android\\app\\build\\outputs\\bundle\\release\\app-release.aab Nitramite --storepass "%nitspec-signing-password%"'
             }
 
             // Archive the AAB (Android App Bundle) so that it can be downloaded from Jenkins
