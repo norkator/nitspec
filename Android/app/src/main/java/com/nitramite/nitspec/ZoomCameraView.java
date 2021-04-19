@@ -3,9 +3,8 @@ package com.nitramite.nitspec;
 import android.content.Context;
 import android.hardware.Camera;
 import android.util.AttributeSet;
-import org.opencv.android.JavaCameraView;
 
-import java.util.List;
+import org.opencv.android.JavaCameraView;
 
 // https://stackoverflow.com/questions/32718941/is-it-possible-to-zoom-and-focus-using-opencv-on-android
 public class ZoomCameraView extends JavaCameraView {
@@ -28,7 +27,8 @@ public class ZoomCameraView extends JavaCameraView {
 
     /**
      * Initialize camera method
-     * @param width frame width
+     *
+     * @param width  frame width
      * @param height frame height
      * @return init result
      */
@@ -42,6 +42,7 @@ public class ZoomCameraView extends JavaCameraView {
 
     /**
      * Get maximum supported zoom level intereger
+     *
      * @return zoom level
      */
     protected Integer getMaxZoomLevel() {
@@ -51,6 +52,7 @@ public class ZoomCameraView extends JavaCameraView {
 
     /**
      * Set zoom level
+     *
      * @param zoomLevel integer value
      */
     protected void setZoomLevel(final int zoomLevel) {
@@ -61,6 +63,7 @@ public class ZoomCameraView extends JavaCameraView {
 
     /**
      * Return zoom supported boolean
+     *
      * @return boolean
      */
     public Boolean getZoomSupported() {
@@ -70,6 +73,7 @@ public class ZoomCameraView extends JavaCameraView {
 
     /**
      * Get camera min exposure compensation
+     *
      * @return integer
      */
     public Integer getMinExposureCompensation() {
@@ -83,6 +87,7 @@ public class ZoomCameraView extends JavaCameraView {
 
     /**
      * Get camera max exposure compensation
+     *
      * @return integer
      */
     public Integer getMaxExposureCompensation() {
@@ -96,6 +101,7 @@ public class ZoomCameraView extends JavaCameraView {
 
     /**
      * Set camera exposure compensation value
+     *
      * @param exposureCompensationValue integer
      */
     public boolean setExposureCompensation(final Integer exposureCompensationValue) {
@@ -113,6 +119,7 @@ public class ZoomCameraView extends JavaCameraView {
 
     /**
      * Set fps range for camera
+     *
      * @param min min
      * @param max max
      */
@@ -128,6 +135,7 @@ public class ZoomCameraView extends JavaCameraView {
 
     /**
      * Get camera settings
+     *
      * @return flatten string
      */
     public String getFlatten() {

@@ -128,7 +128,7 @@
 
 
     <!-- Adjust zoom level seekBar -->
-    <android.support.v7.widget.CardView
+    <androidx.cardview.widget.CardView
         android:id="@+id/cameraZoomLevelSeekBarCard"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -166,12 +166,12 @@
                 android:typeface="monospace" />
 
         </LinearLayout>
-    </android.support.v7.widget.CardView>
+    </androidx.cardview.widget.CardView>
 
 
 
     <!-- Adjust night vision gamma level seekBar -->
-    <android.support.v7.widget.CardView
+    <androidx.cardview.widget.CardView
         android:id="@+id/gammaLevelAdjustCard"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -233,7 +233,7 @@
                 android:typeface="monospace" />
 
         </LinearLayout>
-    </android.support.v7.widget.CardView>
+    </androidx.cardview.widget.CardView>
 
 
 

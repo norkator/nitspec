@@ -6,8 +6,10 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+
 import com.nitramite.adapters.HardwareItem;
 import com.nitramite.adapters.HardwareType;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -15,7 +17,7 @@ import java.util.List;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     // Logging
-    private static final String TAG = "DatabaseHelper";
+    private static final String TAG = DatabaseHelper.class.getSimpleName();
 
     // Variables
     private Context context;
@@ -123,7 +125,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         while (cursor.moveToNext()) {
             arrayList.add(
                     new HardwareItem(HardwareType.GUN, cursor.getInt(0), cursor.getString(1), cursor.getString(2), cursor.getString(3)
-            ));
+                    ));
         }
         cursor.close();
         return arrayList;
@@ -132,16 +134,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     /**
      * Insert gun
+     *
      * @param hardwareItem gun item
      * @return result
      */
-    boolean insertGun(final HardwareItem hardwareItem){
+    boolean insertGun(final HardwareItem hardwareItem) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(gun_letter, hardwareItem.getItemLetter());
         contentValues.put(gun_name, hardwareItem.getItemName());
         contentValues.put(gun_description, hardwareItem.getItemDescription());
-        long result =  db.insert(TABLE_GUN, null, contentValues);
+        long result = db.insert(TABLE_GUN, null, contentValues);
         Log.i(TAG, contentValues.toString());
         return result != -1;
     }
@@ -150,11 +153,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // Delete gun
     boolean deleteGun(final String gun_id_) {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.execSQL("DELETE FROM "+ TABLE_GUN + " WHERE " + gun_id + " = ?", new String[]{gun_id_});
+        db.execSQL("DELETE FROM " + TABLE_GUN + " WHERE " + gun_id + " = ?", new String[]{gun_id_});
         db.close();
         return true;
     }
-
 
 
     // Get ammunitions
@@ -183,6 +185,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     /**
      * Get ammunition params as hardware item
+     *
      * @param selectedAmmunitionId selected one
      * @return hardwareItem
      */
@@ -208,10 +211,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     /**
      * Insert ammunition
+     *
      * @param hardwareItem ammunition item
      * @return result
      */
-    boolean insertAmmunition(final HardwareItem hardwareItem){
+    boolean insertAmmunition(final HardwareItem hardwareItem) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(ammunition_letter, hardwareItem.getItemLetter());
@@ -224,14 +228,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put(ammunition_size_z, hardwareItem.getAmmunitionSizeMillisZ());
         contentValues.put(ammunition_drag_coefficient_x, hardwareItem.getAmmunitionDragCoefficientYValue());
         contentValues.put(ammunition_drag_coefficient_y, hardwareItem.getAmmunitionDragCoefficientYValue());
-        long result =  db.insert(TABLE_AMMUNITION, null, contentValues);
+        long result = db.insert(TABLE_AMMUNITION, null, contentValues);
         Log.i(TAG, contentValues.toString());
         return result != -1;
     }
 
 
     // Update ammunition
-    boolean updateAmmunition(final HardwareItem hardwareItem){
+    boolean updateAmmunition(final HardwareItem hardwareItem) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(ammunition_letter, hardwareItem.getItemLetter());
@@ -244,7 +248,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put(ammunition_size_z, hardwareItem.getAmmunitionSizeMillisZ());
         contentValues.put(ammunition_drag_coefficient_x, hardwareItem.getAmmunitionDragCoefficientYValue());
         contentValues.put(ammunition_drag_coefficient_y, hardwareItem.getAmmunitionDragCoefficientYValue());
-        db.update(TABLE_AMMUNITION, contentValues, ammunition_id + " = ?",new String[] { hardwareItem.getHardwareIdToString() });
+        db.update(TABLE_AMMUNITION, contentValues, ammunition_id + " = ?", new String[]{hardwareItem.getHardwareIdToString()});
         db.close();
         return true;
     }
@@ -253,7 +257,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // Delete ammunition
     boolean deleteAmmunition(final String ammunition_id_) {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.execSQL("DELETE FROM "+ TABLE_AMMUNITION + " WHERE " + ammunition_id + " = ?", new String[]{ammunition_id_});
+        db.execSQL("DELETE FROM " + TABLE_AMMUNITION + " WHERE " + ammunition_id + " = ?", new String[]{ammunition_id_});
         db.close();
         return true;
     }

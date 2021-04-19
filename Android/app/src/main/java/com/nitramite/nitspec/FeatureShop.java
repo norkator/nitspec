@@ -3,26 +3,18 @@ package com.nitramite.nitspec;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.AppCompatButton;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
+import androidx.preference.PreferenceManager;
 
 import com.android.billingclient.api.BillingClient;
-import com.android.billingclient.api.BillingClientStateListener;
-import com.android.billingclient.api.BillingFlowParams;
-import com.android.billingclient.api.Purchase;
-import com.android.billingclient.api.PurchaseHistoryResponseListener;
-import com.android.billingclient.api.PurchasesUpdatedListener;
-
-import java.util.List;
 
 @SuppressWarnings("FieldCanBeLocal")
-public class FeatureShop extends AppCompatActivity implements PurchasesUpdatedListener {
+public class FeatureShop extends AppCompatActivity {
 
 
     // In app billing
@@ -48,46 +40,34 @@ public class FeatureShop extends AppCompatActivity implements PurchasesUpdatedLi
         autoFireBuyBtn = findViewById(R.id.autoFireBuyBtn);
         nightVisionBuyBtn = findViewById(R.id.nightVisionBuyBtn);
         restoreBoughtBtn = findViewById(R.id.restoreBoughtBtn);
-        autoFireBuyOwned= findViewById(R.id.autoFireBuyOwned);
-        nightVisionOwned= findViewById(R.id.nightVisionOwned);
+        autoFireBuyOwned = findViewById(R.id.autoFireBuyOwned);
+        nightVisionOwned = findViewById(R.id.nightVisionOwned);
 
         // Set button states
         checkBoughtStates();
 
         // Init in app billing
-        initInAppBilling();
+        // initInAppBilling();
 
 
-        donateMediumBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                audioPlayer.playSound(FeatureShop.this, R.raw.pull_trigger);
-                inAppPurchase(Constants.IAP_ITEM_SKU_DONATE_MEDIUM);
-            }
+        donateMediumBtn.setOnClickListener(view -> {
+            audioPlayer.playSound(FeatureShop.this, R.raw.pull_trigger);
+            inAppPurchase(Constants.IAP_ITEM_SKU_DONATE_MEDIUM);
         });
 
-        autoFireBuyBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                audioPlayer.playSound(FeatureShop.this, R.raw.pull_trigger);
-                inAppPurchase(Constants.IAP_ITEM_SKU_BUTTON_SELECT_TARGET_AUTO_FIRE);
-            }
+        autoFireBuyBtn.setOnClickListener(view -> {
+            audioPlayer.playSound(FeatureShop.this, R.raw.pull_trigger);
+            inAppPurchase(Constants.IAP_ITEM_SKU_BUTTON_SELECT_TARGET_AUTO_FIRE);
         });
 
-        nightVisionBuyBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                audioPlayer.playSound(FeatureShop.this, R.raw.pull_trigger);
-                inAppPurchase(Constants.IAP_ITEM_SKU_NIGHT_VISION_BASE);
-            }
+        nightVisionBuyBtn.setOnClickListener(view -> {
+            audioPlayer.playSound(FeatureShop.this, R.raw.pull_trigger);
+            inAppPurchase(Constants.IAP_ITEM_SKU_NIGHT_VISION_BASE);
         });
 
-        restoreBoughtBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                audioPlayer.playSound(FeatureShop.this, R.raw.pull_trigger);
-                restorePurchases();
-            }
+        restoreBoughtBtn.setOnClickListener(view -> {
+            audioPlayer.playSound(FeatureShop.this, R.raw.pull_trigger);
+            // restorePurchases();
         });
 
     } // End of onCreate()
@@ -96,6 +76,7 @@ public class FeatureShop extends AppCompatActivity implements PurchasesUpdatedLi
     // ---------------------------------------------------------------------------------------------
     /* In app billing features */
 
+    /* TODO, MIGRATE !  MIGRATE !  MIGRATE !  MIGRATE !  MIGRATE !  MIGRATE !  MIGRATE !
 
     // Initialize in app billing feature
     private void initInAppBilling() {
@@ -137,23 +118,24 @@ public class FeatureShop extends AppCompatActivity implements PurchasesUpdatedLi
             // Handle any other error codes.
         }
     }
-
+    */
 
     // Donate action "purchase"
     public void inAppPurchase(final String IAP_ITEM_SKU) {
-        if (mBillingClient.isReady()) {
-            BillingFlowParams flowParams = BillingFlowParams.newBuilder()
-                    .setSku(IAP_ITEM_SKU)
-                    .setType(BillingClient.SkuType.INAPP)
-                    .build();
-            mBillingClient.launchBillingFlow(this, flowParams);
-        } else {
-            genericErrorDialog("Billing service", "Billing service is not initialized yet. Please try again.");
-            initInAppBilling();
-        }
+        //  if (mBillingClient.isReady()) {
+        //      BillingFlowParams flowParams = BillingFlowParams.newBuilder()
+        //              .setSku(IAP_ITEM_SKU)
+        //              .setType(BillingClient.SkuType.INAPP)
+        //              .build();
+        //      mBillingClient.launchBillingFlow(this, flowParams);
+        //  } else {
+        //      genericErrorDialog("Billing service", "Billing service is not initialized yet. Please try again.");
+        //      initInAppBilling();
+        //  }
     }
 
 
+    /*
     private void setTargetAutoFireEnabled(final Boolean isRestore) {
         SharedPreferences setSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         SharedPreferences.Editor editor = setSharedPreferences.edit();
@@ -173,8 +155,9 @@ public class FeatureShop extends AppCompatActivity implements PurchasesUpdatedLi
         checkBoughtStates();
     }
 
-
+    */
     /* In app Restore purchases */
+    /*
     public void restorePurchases() {
         mBillingClient.queryPurchaseHistoryAsync(BillingClient.SkuType.INAPP,
                 new PurchaseHistoryResponseListener() {
@@ -199,6 +182,7 @@ public class FeatureShop extends AppCompatActivity implements PurchasesUpdatedLi
                 });
     }
 
+    */
 
     // ---------------------------------------------------------------------------------------------
 
@@ -228,11 +212,11 @@ public class FeatureShop extends AppCompatActivity implements PurchasesUpdatedLi
 
 
     private void checkBoughtStates() {
-        autoFireBuyBtn.setVisibility( sharedPreferences.getBoolean(Constants.SP_IAP_BUTTON_SELECT_TARGET_AUTO_FIRE, false) ? View.GONE : View.VISIBLE );
-        autoFireBuyOwned.setVisibility( !sharedPreferences.getBoolean(Constants.SP_IAP_BUTTON_SELECT_TARGET_AUTO_FIRE, false) ? View.GONE : View.VISIBLE );
+        autoFireBuyBtn.setVisibility(sharedPreferences.getBoolean(Constants.SP_IAP_BUTTON_SELECT_TARGET_AUTO_FIRE, false) ? View.GONE : View.VISIBLE);
+        autoFireBuyOwned.setVisibility(!sharedPreferences.getBoolean(Constants.SP_IAP_BUTTON_SELECT_TARGET_AUTO_FIRE, false) ? View.GONE : View.VISIBLE);
 
-        nightVisionBuyBtn.setVisibility( sharedPreferences.getBoolean(Constants.SP_IAP_NIGHT_VISION_BASE, false) ? View.GONE : View.VISIBLE );
-        nightVisionOwned.setVisibility( !sharedPreferences.getBoolean(Constants.SP_IAP_NIGHT_VISION_BASE, false) ? View.GONE : View.VISIBLE );
+        nightVisionBuyBtn.setVisibility(sharedPreferences.getBoolean(Constants.SP_IAP_NIGHT_VISION_BASE, false) ? View.GONE : View.VISIBLE);
+        nightVisionOwned.setVisibility(!sharedPreferences.getBoolean(Constants.SP_IAP_NIGHT_VISION_BASE, false) ? View.GONE : View.VISIBLE);
     }
 
 

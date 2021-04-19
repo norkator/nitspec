@@ -9,33 +9,36 @@ import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
-import android.os.IBinder;
-import android.preference.PreferenceManager;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
+import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
+import android.os.IBinder;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
-import android.view.View;
 import android.view.Window;
+import android.view.WindowInsets;
+import android.view.WindowInsetsController;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+import androidx.preference.PreferenceManager;
+
 import com.nitramite.adapters.BluetoothDeviceItem;
 import com.nitramite.adapters.SingleTapDetector;
+
 import java.util.Set;
 
 public class ButtonShoot extends AppCompatActivity {
 
     // Logging
-    private static final String TAG = "ButtonShoot";
+    private static final String TAG = ButtonShoot.class.getSimpleName();
 
     // View components
     private TextView bluetoothConnectionStatusTitle;
@@ -97,7 +100,18 @@ public class ButtonShoot extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            final WindowInsetsController insetsController = getWindow().getInsetsController();
+            if (insetsController != null) {
+                insetsController.hide(WindowInsets.Type.statusBars());
+            }
+        } else {
+            //noinspection deprecation
+            getWindow().setFlags(
+                    WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                    WindowManager.LayoutParams.FLAG_FULLSCREEN
+            );
+        }
         setContentView(R.layout.activity_button_shoot);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         getWindow().setNavigationBarColor(ContextCompat.getColor(ButtonShoot.this, R.color.colorBlack));
@@ -118,34 +132,31 @@ public class ButtonShoot extends AppCompatActivity {
         // View custom gesture listeners
         gestureDetector = new GestureDetector(ButtonShoot.this, new SingleTapDetector());
 
-        triggerBtn.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                switch (motionEvent.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        ObjectAnimator scaleDownX = ObjectAnimator.ofFloat(triggerBtn, "scaleX", 0.8f);
-                        ObjectAnimator scaleDownY = ObjectAnimator.ofFloat(triggerBtn, "scaleY", 0.8f);
-                        scaleDownX.setDuration(buttonAnimationMillis);
-                        scaleDownY.setDuration(buttonAnimationMillis);
-                        AnimatorSet scaleDown = new AnimatorSet();
-                        scaleDown.play(scaleDownX).with(scaleDownY);
-                        scaleDown.start();
-                        triggerBtn.setPressed(true);
-                        break;
-                    case MotionEvent.ACTION_UP:
-                        ObjectAnimator scaleDownX2 = ObjectAnimator.ofFloat(triggerBtn, "scaleX", 1f);
-                        ObjectAnimator scaleDownY2 = ObjectAnimator.ofFloat(triggerBtn, "scaleY", 1f);
-                        scaleDownX2.setDuration(buttonAnimationMillis);
-                        scaleDownY2.setDuration(buttonAnimationMillis);
-                        AnimatorSet scaleDown2 = new AnimatorSet();
-                        scaleDown2.play(scaleDownX2).with(scaleDownY2);
-                        scaleDown2.start();
-                        triggerBtn.setPressed(false);
-                        sendPullTriggerAction();
-                        break;
-                }
-                return gestureDetector.onTouchEvent(motionEvent);
+        triggerBtn.setOnTouchListener((view, motionEvent) -> {
+            switch (motionEvent.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    ObjectAnimator scaleDownX = ObjectAnimator.ofFloat(triggerBtn, "scaleX", 0.8f);
+                    ObjectAnimator scaleDownY = ObjectAnimator.ofFloat(triggerBtn, "scaleY", 0.8f);
+                    scaleDownX.setDuration(buttonAnimationMillis);
+                    scaleDownY.setDuration(buttonAnimationMillis);
+                    AnimatorSet scaleDown = new AnimatorSet();
+                    scaleDown.play(scaleDownX).with(scaleDownY);
+                    scaleDown.start();
+                    triggerBtn.setPressed(true);
+                    break;
+                case MotionEvent.ACTION_UP:
+                    ObjectAnimator scaleDownX2 = ObjectAnimator.ofFloat(triggerBtn, "scaleX", 1f);
+                    ObjectAnimator scaleDownY2 = ObjectAnimator.ofFloat(triggerBtn, "scaleY", 1f);
+                    scaleDownX2.setDuration(buttonAnimationMillis);
+                    scaleDownY2.setDuration(buttonAnimationMillis);
+                    AnimatorSet scaleDown2 = new AnimatorSet();
+                    scaleDown2.play(scaleDownX2).with(scaleDownY2);
+                    scaleDown2.start();
+                    triggerBtn.setPressed(false);
+                    sendPullTriggerAction();
+                    break;
             }
+            return gestureDetector.onTouchEvent(motionEvent);
         });
 
 
@@ -153,7 +164,6 @@ public class ButtonShoot extends AppCompatActivity {
         Intent btServiceIntent = new Intent(this, BluetoothService.class);
         bindService(btServiceIntent, serviceConnection, BIND_AUTO_CREATE);
     } // End of onCreate()
-
 
 
     /**
@@ -309,9 +319,7 @@ public class ButtonShoot extends AppCompatActivity {
                 new AlertDialog.Builder(ButtonShoot.this)
                         .setTitle(title)
                         .setMessage(description)
-                        .setPositiveButton("Close", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                            }
+                        .setPositiveButton("Close", (dialog, which) -> {
                         })
                         .setIcon(R.drawable.circle_hi_res)
                         .show();

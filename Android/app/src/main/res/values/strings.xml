@@ -7,7 +7,7 @@
     <string name="main_menu_manage_bluetooth_button_connect_scope_title">Connect scope</string>
     <string name="main_menu_manage_bluetooth_button_forget_device_title">Forget device</string>
     <string name="error">Error</string>
-    <string name="camera_connecting_title">Connecting...</string>
+    <string name="camera_connecting_title">Connecting…</string>
     <string name="came_bluetooth_state_idle">Bluetooth idle</string>
     <string name="came_bluetooth_state_connection_failed">Bluetooth connection FAILED</string>
 

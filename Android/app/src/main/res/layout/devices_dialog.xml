@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -18,13 +18,13 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:padding="10dp"
             android:background="@color/bootStrapPrimary"
+            android:padding="10dp"
             android:text="Choose scope hardware device"
             android:textAlignment="center"
             android:textColor="@color/colorWhite"
-            android:typeface="monospace"/>
+            android:textSize="18sp"
+            android:typeface="monospace" />
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -37,9 +37,9 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
                 android:text="You have not paired your scope device"
-                android:typeface="monospace"/>
+                android:typeface="monospace" />
 
-            <android.support.v7.widget.RecyclerView
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/pairedDevicesRecyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -50,4 +50,4 @@
 
     </LinearLayout>
 
-</android.support.v7.widget.CardView>
+</androidx.cardview.widget.CardView>

@@ -14,12 +14,7 @@ class AudioPlayer {
     private void play(Context c, int rid, float volume) {
         //stop();
         mMediaPlayer = MediaPlayer.create(c, rid);
-        mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mediaPlayer) {
-                stop();
-            }
-        });
+        mMediaPlayer.setOnCompletionListener(mediaPlayer -> stop());
         mMediaPlayer.setVolume(volume, volume);
         mMediaPlayer.start();
     }

@@ -47,7 +47,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <android.support.v7.widget.CardView
+                <androidx.cardview.widget.CardView
                     android:layout_width="180dp"
                     android:layout_height="180dp"
                     android:layout_marginStart="5dp"
@@ -79,7 +79,7 @@
                             android:textAlignment="center"
                             android:textSize="12sp" />
 
-                        <android.support.v7.widget.AppCompatButton
+                        <androidx.appcompat.widget.AppCompatButton
                             android:id="@+id/donateMediumBtn"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -89,10 +89,10 @@
                             android:textColor="#ffffff" />
 
                     </LinearLayout>
-                </android.support.v7.widget.CardView>
+                </androidx.cardview.widget.CardView>
 
 
-                <android.support.v7.widget.CardView
+                <androidx.cardview.widget.CardView
                     android:layout_width="180dp"
                     android:layout_height="180dp"
                     android:layout_marginStart="5dp"
@@ -124,7 +124,7 @@
                             android:textAlignment="center"
                             android:textSize="12sp" />
 
-                        <android.support.v7.widget.AppCompatButton
+                        <androidx.appcompat.widget.AppCompatButton
                             android:id="@+id/autoFireBuyBtn"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -143,10 +143,10 @@
                             android:textSize="16sp" />
 
                     </LinearLayout>
-                </android.support.v7.widget.CardView>
+                </androidx.cardview.widget.CardView>
 
 
-                <android.support.v7.widget.CardView
+                <androidx.cardview.widget.CardView
                     android:layout_width="180dp"
                     android:layout_height="180dp"
                     android:layout_marginStart="5dp"
@@ -178,7 +178,7 @@
                             android:textAlignment="center"
                             android:textSize="12sp" />
 
-                        <android.support.v7.widget.AppCompatButton
+                        <androidx.appcompat.widget.AppCompatButton
                             android:id="@+id/nightVisionBuyBtn"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -197,14 +197,14 @@
                             android:textSize="16sp" />
 
                     </LinearLayout>
-                </android.support.v7.widget.CardView>
+                </androidx.cardview.widget.CardView>
 
 
             </LinearLayout>
         </HorizontalScrollView>
     </LinearLayout>
 
-    <android.support.v7.widget.AppCompatButton
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/restoreBoughtBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
