@@ -211,6 +211,7 @@ public class CameraSystem extends AppCompatActivity implements CameraBridgeViewB
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
+        setContentView(R.layout.activity_camera_system);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             final WindowInsetsController insetsController = getWindow().getInsetsController();
             if (insetsController != null) {
@@ -223,7 +224,6 @@ public class CameraSystem extends AppCompatActivity implements CameraBridgeViewB
                     WindowManager.LayoutParams.FLAG_FULLSCREEN
             );
         }
-        setContentView(R.layout.activity_camera_system);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         // Get services
