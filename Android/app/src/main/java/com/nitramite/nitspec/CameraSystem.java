@@ -17,18 +17,18 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Build;
+import android.os.Bundle;
 import android.os.IBinder;
-import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.Voice;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowInsets;
+import android.view.WindowInsetsController;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -39,10 +39,16 @@ import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
+import androidx.preference.PreferenceManager;
+
 import com.nitramite.adapters.BluetoothDeviceItem;
 import com.nitramite.adapters.HardwareItem;
 import com.nitramite.libraries.horizontalwheelview.HorizontalWheelView;
 import com.nitramite.math.MathUtils;
+
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.LoaderCallbackInterface;
@@ -53,6 +59,7 @@ import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
+
 import java.text.DecimalFormat;
 import java.util.Locale;
 import java.util.Set;
@@ -61,7 +68,7 @@ import java.util.Set;
 public class CameraSystem extends AppCompatActivity implements CameraBridgeViewBase.CvCameraViewListener2, View.OnTouchListener, SensorEventListener {
 
     // Logging
-    private static final String TAG = "CameraSystem";
+    private static final String TAG = CameraSystem.class.getSimpleName();
 
     // View components
     private TextView bluetoothConnectionStatusTitle, scopeHardwareReadingsTV, debugParametersTV, targetRangeTV, currentModeTV;
@@ -204,12 +211,23 @@ public class CameraSystem extends AppCompatActivity implements CameraBridgeViewB
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_camera_system);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            final WindowInsetsController insetsController = getWindow().getInsetsController();
+            if (insetsController != null) {
+                insetsController.hide(WindowInsets.Type.statusBars());
+            }
+        } else {
+            //noinspection deprecation
+            getWindow().setFlags(
+                    WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                    WindowManager.LayoutParams.FLAG_FULLSCREEN
+            );
+        }
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         // Get services
-        sensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
+        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         CURRENT_MODE = ModeEnum.valueOf(sharedPreferences.getString(Constants.SP_MODE_ENUM, ModeEnum.BUTTON_MANUAL_FIRE_ONLY.name())); // Get string to mode enum
         SP_ENABLE_TRIGGER_SAFETY = sharedPreferences.getBoolean(Constants.SP_ENABLE_TRIGGER_SAFETY, true);
@@ -290,97 +308,66 @@ public class CameraSystem extends AppCompatActivity implements CameraBridgeViewB
 
 
         // Method to select current visible center angle as target
-        selectTargetBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                selectTargetAction();
-            }
-        });
+        selectTargetBtn.setOnClickListener(view -> selectTargetAction());
 
         // Method to send pull trigger command
-        pullTriggerEventBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                sendPullTriggerAction();
-            }
+        pullTriggerEventBtn.setOnClickListener(view -> sendPullTriggerAction());
+
+        editParametersBtn.setOnClickListener(view -> {
+            audioPlayer.playSound(CameraSystem.this, R.raw.pull_trigger);
+            parametersDialog();
         });
 
-        editParametersBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                audioPlayer.playSound(CameraSystem.this, R.raw.pull_trigger);
-                parametersDialog();
-            }
-        });
-
-        cameraZoomLevelDismissBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                cameraZoomLevelSeekBarCard.setVisibility(View.GONE);
-                SharedPreferences setSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-                SharedPreferences.Editor editor = setSharedPreferences.edit();
-                editor.putInt(Constants.SP_CAMERA_ZOOM_LEVEL, cameraZoomLevel);
-                editor.apply();
-            }
+        cameraZoomLevelDismissBtn.setOnClickListener(view -> {
+            cameraZoomLevelSeekBarCard.setVisibility(View.GONE);
+            SharedPreferences setSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+            SharedPreferences.Editor editor = setSharedPreferences.edit();
+            editor.putInt(Constants.SP_CAMERA_ZOOM_LEVEL, cameraZoomLevel);
+            editor.apply();
         });
 
 
-        gammaLevelDismissBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                gammaLevelAdjustCard.setVisibility(View.GONE);
-                SharedPreferences setSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-                SharedPreferences.Editor editor = setSharedPreferences.edit();
-                editor.putLong(Constants.SP_NIGHT_VISION_GAMMA_LEVEL, Utils.sharedPrefsDoubleToLong(GAMMA_VALUE));
-                editor.apply();
-            }
+        gammaLevelDismissBtn.setOnClickListener(view -> {
+            gammaLevelAdjustCard.setVisibility(View.GONE);
+            SharedPreferences setSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+            SharedPreferences.Editor editor = setSharedPreferences.edit();
+            editor.putLong(Constants.SP_NIGHT_VISION_GAMMA_LEVEL, Utils.sharedPrefsDoubleToLong(GAMMA_VALUE));
+            editor.apply();
         });
-        gammaLevelDecrementBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                audioPlayer.playSound(CameraSystem.this, R.raw.pull_trigger);
-                GAMMA_VALUE = GAMMA_VALUE - 0.1;
-                gammaLevelTV.setText(String.valueOf(decimalFormat.format(GAMMA_VALUE)));
-            }
+        gammaLevelDecrementBtn.setOnClickListener(view -> {
+            audioPlayer.playSound(CameraSystem.this, R.raw.pull_trigger);
+            GAMMA_VALUE = GAMMA_VALUE - 0.1;
+            gammaLevelTV.setText(String.valueOf(decimalFormat.format(GAMMA_VALUE)));
         });
-        gammaLevelIncrementBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                audioPlayer.playSound(CameraSystem.this, R.raw.pull_trigger);
-                GAMMA_VALUE = GAMMA_VALUE + 0.1;
-                gammaLevelTV.setText(String.valueOf(decimalFormat.format(GAMMA_VALUE)));
-            }
+        gammaLevelIncrementBtn.setOnClickListener(view -> {
+            audioPlayer.playSound(CameraSystem.this, R.raw.pull_trigger);
+            GAMMA_VALUE = GAMMA_VALUE + 0.1;
+            gammaLevelTV.setText(String.valueOf(decimalFormat.format(GAMMA_VALUE)));
         });
 
 
         // Set zeroing for angle sensor Y and X axis and save values
-        zeroAngleSensorBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                audioPlayer.playSound(CameraSystem.this, R.raw.pull_trigger);
-                yAxisZeroing = mOrientation[2];
-                SharedPreferences setSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-                SharedPreferences.Editor editor = setSharedPreferences.edit();
-                editor.putFloat(Constants.SP_CAMERA_ANGLE_Y_AXIS_ZEROING_OFFSET, yAxisZeroing);
-                editor.putFloat(Constants.SP_CAMERA_ANGLE_X_AXIS_ZEROING_OFFSET, xAxisZeroing);
-                editor.apply();
-                Toast.makeText(bluetoothService, "Y and X zeroing parameters saved", Toast.LENGTH_SHORT).show();
-            }
+        zeroAngleSensorBtn.setOnClickListener(view -> {
+            audioPlayer.playSound(CameraSystem.this, R.raw.pull_trigger);
+            yAxisZeroing = mOrientation[2];
+            SharedPreferences setSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+            SharedPreferences.Editor editor = setSharedPreferences.edit();
+            editor.putFloat(Constants.SP_CAMERA_ANGLE_Y_AXIS_ZEROING_OFFSET, yAxisZeroing);
+            editor.putFloat(Constants.SP_CAMERA_ANGLE_X_AXIS_ZEROING_OFFSET, xAxisZeroing);
+            editor.apply();
+            Toast.makeText(bluetoothService, "Y and X zeroing parameters saved", Toast.LENGTH_SHORT).show();
         });
         // Clear Y and X angle zeroing parameters
-        zeroAngleSensorBtn.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                SharedPreferences setSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-                SharedPreferences.Editor editor = setSharedPreferences.edit();
-                editor.remove(Constants.SP_CAMERA_ANGLE_Y_AXIS_ZEROING_OFFSET);
-                editor.remove(Constants.SP_CAMERA_ANGLE_X_AXIS_ZEROING_OFFSET);
-                editor.apply();
-                yAxisZeroing = 0.0f;
-                xAxisZeroing = 0.0f;
-                Toast.makeText(bluetoothService, "Y and X zeroing parameters cleared", Toast.LENGTH_SHORT).show();
-                return true;
-            }
+        zeroAngleSensorBtn.setOnLongClickListener(view -> {
+            SharedPreferences setSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+            SharedPreferences.Editor editor = setSharedPreferences.edit();
+            editor.remove(Constants.SP_CAMERA_ANGLE_Y_AXIS_ZEROING_OFFSET);
+            editor.remove(Constants.SP_CAMERA_ANGLE_X_AXIS_ZEROING_OFFSET);
+            editor.apply();
+            yAxisZeroing = 0.0f;
+            xAxisZeroing = 0.0f;
+            Toast.makeText(bluetoothService, "Y and X zeroing parameters cleared", Toast.LENGTH_SHORT).show();
+            return true;
         });
 
 
@@ -474,7 +461,6 @@ public class CameraSystem extends AppCompatActivity implements CameraBridgeViewB
         }
 
 
-
         // Get screen center
         final int screenXCenter = mRgbaMat.width() / 2;
         final int screenYCenter = mRgbaMat.height() / 2;
@@ -485,12 +471,12 @@ public class CameraSystem extends AppCompatActivity implements CameraBridgeViewB
         // Draw X line
         Point crossHairX1 = new Point(screenXCenter - 80, screenYCenter);
         Point crossHairX2 = new Point(screenXCenter + 80, screenYCenter);
-        Imgproc.line(mRgbaMat, crossHairX1, crossHairX2, new Scalar(0,255,50), 1);
+        Imgproc.line(mRgbaMat, crossHairX1, crossHairX2, new Scalar(0, 255, 50), 1);
 
         // Draw Y line
         Point crossHairY1 = new Point(screenXCenter, screenYCenter - 80);
         Point crossHairY2 = new Point(screenXCenter, screenYCenter + 80);
-        Imgproc.line(mRgbaMat, crossHairY1, crossHairY2, new Scalar(0,255,50), 1);
+        Imgproc.line(mRgbaMat, crossHairY1, crossHairY2, new Scalar(0, 255, 50), 1);
 
 
         if (targetYDegree != 0.0 && TRIGGER_ACTIVATED) {
@@ -517,12 +503,12 @@ public class CameraSystem extends AppCompatActivity implements CameraBridgeViewB
             // Draw selected target circle
             final double selectedPointY = screenYCenter + ((MathUtils.flipValue(targetYDegree) + currentYDegrees) * 50); // Last * x can make circles flow more
             //final double selectedPointX = screenXCenter + ((MathUtils.flipValue(targetXDegree) + currentXDegrees) * 30); // Last * x can make circles flow more
-            Imgproc.circle(mRgbaMat, new Point(screenXCenter, selectedPointY),2, new Scalar(55, 242, 121), -1, 4,0);
+            Imgproc.circle(mRgbaMat, new Point(screenXCenter, selectedPointY), 2, new Scalar(55, 242, 121), -1, 4, 0);
 
 
             // Draw guiding circle
             final double correctionPointY = screenYCenter + ((MathUtils.flipValue(correctionYDegrees) + currentYDegrees) * 50); // Last * x can make circles flow more
-            Imgproc.circle(mRgbaMat, new Point(screenXCenter, correctionPointY),2, new Scalar(250,50,50), -1, 8,0);
+            Imgproc.circle(mRgbaMat, new Point(screenXCenter, correctionPointY), 2, new Scalar(250, 50, 50), -1, 8, 0);
 
 
             // Automatic trigger control
@@ -542,10 +528,10 @@ public class CameraSystem extends AppCompatActivity implements CameraBridgeViewB
     }
 
 
-
     /**
      * Gamma correction method to correct image
      * https://docs.opencv.org/3.4.3/d3/dc1/tutorial_basic_linear_transform.html
+     *
      * @param inputMat input mat frame
      * @return output mat frame
      */
@@ -553,7 +539,7 @@ public class CameraSystem extends AppCompatActivity implements CameraBridgeViewB
 
         // Apply gamma correction
         Mat lookUpTable = new Mat(1, 256, CvType.CV_8U);
-        byte[] lookUpTableData = new byte[(int) (lookUpTable.total()*lookUpTable.channels())];
+        byte[] lookUpTableData = new byte[(int) (lookUpTable.total() * lookUpTable.channels())];
         for (int i = 0; i < lookUpTable.cols(); i++) {
             lookUpTableData[i] = saturate(Math.pow(i / 255.0, GAMMA_VALUE) * 255.0);
         }
@@ -569,6 +555,7 @@ public class CameraSystem extends AppCompatActivity implements CameraBridgeViewB
 
     /**
      * Saturate methhod
+     *
      * @param val saturation value
      * @return byte
      */
@@ -577,25 +564,6 @@ public class CameraSystem extends AppCompatActivity implements CameraBridgeViewB
         iVal = iVal > 255 ? 255 : (iVal < 0 ? 0 : iVal);
         return (byte) iVal;
     }
-
-
-    /*
-    Mat equalizeIntensity(Mat inputImage) {
-        if (inputImage.channels() >= 3) {
-            Mat ycrcb = new Mat();
-            Imgproc.cvtColor(inputImage, ycrcb, Imgproc.COLOR_BGR2YCrCb);
-            List<Mat> channels = new ArrayList<>();
-            Core.split(ycrcb, channels);
-            Imgproc.equalizeHist(channels.get(0), channels.get(0));
-            Mat result = new Mat();
-            Core.merge(channels, ycrcb);
-            Imgproc.cvtColor(ycrcb, result, Imgproc.COLOR_YCrCb2RGB);
-            ycrcb.release();
-            return result;
-        }
-        return inputImage;
-    }
-    */
 
 
     /**
@@ -778,7 +746,7 @@ public class CameraSystem extends AppCompatActivity implements CameraBridgeViewB
                         case ActionState.ACTION_CONNECTION_FAILED:
                             bluetoothConnectionStatusTitle.setText(R.string.came_bluetooth_state_connection_failed);
                             speakTTS("Bluetooth connection failed");
-                          break;
+                            break;
                         case ActionState.ACTION_SCOPE_MESSAGE_IN:
                             parseScopeMessage(message);
                             break;
@@ -795,6 +763,7 @@ public class CameraSystem extends AppCompatActivity implements CameraBridgeViewB
 
     /**
      * Parse scope message
+     *
      * @param scopeMessageData Incoming message from scope
      */
     private void parseScopeMessage(final String scopeMessageData) {
@@ -811,17 +780,11 @@ public class CameraSystem extends AppCompatActivity implements CameraBridgeViewB
             for (String hwParam : hwParams) {
                 if (hwParam.contains("PRS")) {
                     pressureReadingHehtoPascals = Double.parseDouble(hwParam.replace("PRS:", "").replace(";", ""));
-                }
-                else
-                if (hwParam.contains("TMP")) {
+                } else if (hwParam.contains("TMP")) {
                     temperatureCelsiusReading = Double.parseDouble(hwParam.replace("TMP:", "").replace(";", ""));
-                }
-                else
-                if (hwParam.contains("VTG")) {
+                } else if (hwParam.contains("VTG")) {
                     voltageReading = Double.parseDouble(hwParam.replace("VTG:", "").replace(";", ""));
-                }
-                else
-                if (hwParam.contains("RNG")) {
+                } else if (hwParam.contains("RNG")) {
                     targetRangeMetersReading = Double.parseDouble(hwParam.replace("RNG:", "").replace(";", ""));
                 }
             }
@@ -860,13 +823,13 @@ public class CameraSystem extends AppCompatActivity implements CameraBridgeViewB
     }
 
 
-
     // ---------------------------------------------------------------------------------------------
     /* Helpers */
 
 
     /**
      * Run toast from thread, avoid crash on non ui thread
+     *
      * @param text string to show
      */
     private void toastFromThread(final String text) {
@@ -948,7 +911,7 @@ public class CameraSystem extends AppCompatActivity implements CameraBridgeViewB
 
             // orientation contains: azimut, pitch and roll
             // display every th values
-            if(counter++ % 20 == 0){
+            if (counter++ % 20 == 0) {
 
                 final Double yDegrees = MathUtils.rollToDegrees(mOrientation[2], yAxisZeroing);
 
@@ -985,14 +948,15 @@ public class CameraSystem extends AppCompatActivity implements CameraBridgeViewB
 
 
     /**
-     *  Some notes for low pass filters: https://www.built.io/blog/applying-low-pass-filter-to-android-sensor-s-readings
-     * @param input input
+     * Some notes for low pass filters: https://www.built.io/blog/applying-low-pass-filter-to-android-sensor-s-readings
+     *
+     * @param input  input
      * @param output output
      * @return return
      */
-    protected float[] lowPassFilter( float[] input, float[] output ) {
-        if ( output == null ) return input;
-        for ( int i=0; i<input.length; i++ ) {
+    protected float[] lowPassFilter(float[] input, float[] output) {
+        if (output == null) return input;
+        for (int i = 0; i < input.length; i++) {
             output[i] = output[i] + LPF_ALPHA * (input[i] - output[i]);
         }
         return output;
@@ -1032,6 +996,7 @@ public class CameraSystem extends AppCompatActivity implements CameraBridgeViewB
 
     /**
      * Speak text
+     *
      * @param text text to speak
      */
     private void speakTTS(final String text) {
@@ -1150,7 +1115,7 @@ public class CameraSystem extends AppCompatActivity implements CameraBridgeViewB
         modeSelectorSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                if (ModeEnum.values()[i].equals(ModeEnum.BUTTON_SELECT_TARGET_AUTO_FIRE)&& !sharedPreferences.getBoolean(Constants.SP_IAP_BUTTON_SELECT_TARGET_AUTO_FIRE, false)) {
+                if (ModeEnum.values()[i].equals(ModeEnum.BUTTON_SELECT_TARGET_AUTO_FIRE) && !sharedPreferences.getBoolean(Constants.SP_IAP_BUTTON_SELECT_TARGET_AUTO_FIRE, false)) {
                     genericErrorDialog("", "This feature needs bought before it can be used. See feature shop at main menu.");
                     return;
                 }
@@ -1161,6 +1126,7 @@ public class CameraSystem extends AppCompatActivity implements CameraBridgeViewB
                 CURRENT_MODE = ModeEnum.values()[i]; // Set current selected mode
                 setCurrentModeString();
             }
+
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
 
@@ -1171,7 +1137,8 @@ public class CameraSystem extends AppCompatActivity implements CameraBridgeViewB
 
     /**
      * Get selection int
-     * @param enums enums string[]
+     *
+     * @param enums          enums string[]
      * @param currentModeStr current mode
      * @return position
      */

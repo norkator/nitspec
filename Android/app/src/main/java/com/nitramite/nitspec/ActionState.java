@@ -11,5 +11,4 @@ class ActionState {
     static final String ACTION_CONNECTION_LOST = "ACTION_CONNECTION_LOST";
     static final String ACTION_SCOPE_MESSAGE_IN = "ACTION_SCOPE_MESSAGE_IN";
 
-
 } // End of class

@@ -4,13 +4,10 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
-import android.os.Vibrator;
-import android.preference.PreferenceManager;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -20,17 +17,21 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.PreferenceManager;
+
 import com.nitramite.adapters.DialogMode;
 import com.nitramite.adapters.HardwareItem;
 import com.nitramite.adapters.HardwareSpinnerAdapter;
 import com.nitramite.adapters.HardwareType;
+
 import java.util.ArrayList;
 
 @SuppressWarnings("FieldCanBeLocal")
 public class HardwareParameters extends AppCompatActivity {
 
     // Logging
-    private static final String TAG = "HardwareParameters";
+    private static final String TAG = HardwareParameters.class.getSimpleName();
 
     // View components
     private Spinner gunSelectSpinner, ammunitionSelectSpinner;
@@ -68,55 +69,28 @@ public class HardwareParameters extends AppCompatActivity {
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 
 
-        addNewGunBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                vibrate();
-                audioPlayer.playSound(HardwareParameters.this, R.raw.pull_trigger);
-                addGunDialog();
-            }
+        addNewGunBtn.setOnClickListener(view -> {
+            vibrate();
+            audioPlayer.playSound(HardwareParameters.this, R.raw.pull_trigger);
+            addGunDialog();
         });
 
 
-        /*
-        editGunBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                vibrate();
-                audioPlayer.playSound(HardwareParameters.this, R.raw.pull_trigger);
-                final Integer currentSelection = sharedPreferences.getInt(Constants.SP_SELECTED_GUN_ID, 0);
-                for (int i = 0; i < gunHardwareItems.size(); i++) {
-                    if (gunHardwareItems.get(i).getHardwareId().equals(currentSelection)) {
-                        manageHardwareItemConfirmationDialog(gunHardwareItems.get(i));
-                        break;
-                    }
-                }
-            }
-        });
-        */
-
-
-        addNewAmmunitionBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                vibrate();
-                audioPlayer.playSound(HardwareParameters.this, R.raw.pull_trigger);
-                addOrUpdateAmmunitionDialog(DialogMode.INSERT, null);
-            }
+        addNewAmmunitionBtn.setOnClickListener(view -> {
+            vibrate();
+            audioPlayer.playSound(HardwareParameters.this, R.raw.pull_trigger);
+            addOrUpdateAmmunitionDialog(DialogMode.INSERT, null);
         });
 
 
-        editAmmunitionBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                vibrate();
-                audioPlayer.playSound(HardwareParameters.this, R.raw.pull_trigger);
-                final Integer currentSelection = sharedPreferences.getInt(Constants.SP_SELECTED_AMMUNITION_ID, 0);
-                for (int i = 0; i < ammunitionHardwareItems.size(); i++) {
-                    if (ammunitionHardwareItems.get(i).getHardwareId().equals(currentSelection)) {
-                        addOrUpdateAmmunitionDialog(DialogMode.UPDATE, ammunitionHardwareItems.get(i));
-                        break;
-                    }
+        editAmmunitionBtn.setOnClickListener(view -> {
+            vibrate();
+            audioPlayer.playSound(HardwareParameters.this, R.raw.pull_trigger);
+            final Integer currentSelection = sharedPreferences.getInt(Constants.SP_SELECTED_AMMUNITION_ID, 0);
+            for (int i = 0; i < ammunitionHardwareItems.size(); i++) {
+                if (ammunitionHardwareItems.get(i).getHardwareId().equals(currentSelection)) {
+                    addOrUpdateAmmunitionDialog(DialogMode.UPDATE, ammunitionHardwareItems.get(i));
+                    break;
                 }
             }
         });
@@ -125,7 +99,6 @@ public class HardwareParameters extends AppCompatActivity {
         getGuns();
         getAmmunitions();
     } // End of onCreate();
-
 
 
     /**
@@ -151,18 +124,15 @@ public class HardwareParameters extends AppCompatActivity {
             public void onNothingSelected(AdapterView<?> adapterView) {
             }
         });
-        gunSelectSpinner.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                final Integer currentSelection = sharedPreferences.getInt(Constants.SP_SELECTED_GUN_ID, 0);
-                for (int i = 0; i < gunHardwareItems.size(); i++) {
-                    if (gunHardwareItems.get(i).getHardwareId().equals(currentSelection)) {
-                        deleteConfirmationDialog(gunHardwareItems.get(i));
-                        break;
-                    }
+        gunSelectSpinner.setOnLongClickListener(view -> {
+            final Integer currentSelection = sharedPreferences.getInt(Constants.SP_SELECTED_GUN_ID, 0);
+            for (int i = 0; i < gunHardwareItems.size(); i++) {
+                if (gunHardwareItems.get(i).getHardwareId().equals(currentSelection)) {
+                    deleteConfirmationDialog(gunHardwareItems.get(i));
+                    break;
                 }
-                return true;
             }
+            return true;
         });
         for (int i = 0; i < gunHardwareItems.size(); i++) {
             if (gunHardwareItems.get(i).getHardwareId().equals(selectedGunId)) {
@@ -196,18 +166,15 @@ public class HardwareParameters extends AppCompatActivity {
             public void onNothingSelected(AdapterView<?> adapterView) {
             }
         });
-        ammunitionSelectSpinner.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                final Integer currentSelection = sharedPreferences.getInt(Constants.SP_SELECTED_AMMUNITION_ID, 0);
-                for (int i = 0; i < ammunitionHardwareItems.size(); i++) {
-                    if (ammunitionHardwareItems.get(i).getHardwareId().equals(currentSelection)) {
-                        deleteConfirmationDialog(ammunitionHardwareItems.get(i));
-                        break;
-                    }
+        ammunitionSelectSpinner.setOnLongClickListener(view -> {
+            final Integer currentSelection = sharedPreferences.getInt(Constants.SP_SELECTED_AMMUNITION_ID, 0);
+            for (int i = 0; i < ammunitionHardwareItems.size(); i++) {
+                if (ammunitionHardwareItems.get(i).getHardwareId().equals(currentSelection)) {
+                    deleteConfirmationDialog(ammunitionHardwareItems.get(i));
+                    break;
                 }
-                return true;
             }
+            return true;
         });
         for (int i = 0; i < ammunitionHardwareItems.size(); i++) {
             if (ammunitionHardwareItems.get(i).getHardwareId().equals(selectedAmmunitionId)) {
@@ -232,32 +199,24 @@ public class HardwareParameters extends AppCompatActivity {
         final EditText letterInput = dialog.findViewById(R.id.letterInput);
         final EditText nameInput = dialog.findViewById(R.id.nameInput);
         final EditText descriptionInput = dialog.findViewById(R.id.descriptionInput);
-        proceedBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // Get input variables
-                final String letter = letterInput.getText().toString();
-                final String name = nameInput.getText().toString();
-                final String description = descriptionInput.getText().toString();
-                // Insert
-                if (letter.length() > 0 && name.length() > 0 && description.length() > 0) {
-                    // new HardwareItem(HardwareType.GUN, "G", "Gamo Socom Storm", "IGT 4.5mm")
-                    databaseHelper.insertGun(
-                            new HardwareItem(HardwareType.GUN, null, letter, name, description)
-                    );
-                    getGuns();
-                    dialog.dismiss();
-                } else {
-                    Toast.makeText(HardwareParameters.this, "All fields must be filled!", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-        dismissBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        proceedBtn.setOnClickListener(view -> {
+            // Get input variables
+            final String letter = letterInput.getText().toString();
+            final String name = nameInput.getText().toString();
+            final String description = descriptionInput.getText().toString();
+            // Insert
+            if (letter.length() > 0 && name.length() > 0 && description.length() > 0) {
+                // new HardwareItem(HardwareType.GUN, "G", "Gamo Socom Storm", "IGT 4.5mm")
+                databaseHelper.insertGun(
+                        new HardwareItem(HardwareType.GUN, null, letter, name, description)
+                );
+                getGuns();
                 dialog.dismiss();
+            } else {
+                Toast.makeText(HardwareParameters.this, "All fields must be filled!", Toast.LENGTH_SHORT).show();
             }
         });
+        dismissBtn.setOnClickListener(view -> dialog.dismiss());
     }
 
 
@@ -297,85 +256,62 @@ public class HardwareParameters extends AppCompatActivity {
             dragCoefficientYInput.setText(Double.toString(hardwareItem.getAmmunitionDragCoefficientYValue()));
         }
 
-        proceedBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        proceedBtn.setOnClickListener(view -> {
 
-                // Get input variables
-                final String letter = letterInput.getText().toString();
-                final String name = nameInput.getText().toString();
-                final String description = descriptionInput.getText().toString();
-                final Double speed = Double.parseDouble(speedInput.getText().toString());
-                final Double weight = Double.parseDouble(weightInput.getText().toString());
-                final Double sizeX = Double.parseDouble(sizeXInput.getText().toString());
-                final Double sizeY = Double.parseDouble(sizeYInput.getText().toString());
-                final Double coefficientX = Double.parseDouble(dragCoefficientXInput.getText().toString());
-                final Double coefficientY = Double.parseDouble(dragCoefficientYInput.getText().toString());
+            // Get input variables
+            final String letter = letterInput.getText().toString();
+            final String name = nameInput.getText().toString();
+            final String description = descriptionInput.getText().toString();
+            final Double speed = Double.parseDouble(speedInput.getText().toString());
+            final Double weight = Double.parseDouble(weightInput.getText().toString());
+            final Double sizeX = Double.parseDouble(sizeXInput.getText().toString());
+            final Double sizeY = Double.parseDouble(sizeYInput.getText().toString());
+            final Double coefficientX = Double.parseDouble(dragCoefficientXInput.getText().toString());
+            final Double coefficientY = Double.parseDouble(dragCoefficientYInput.getText().toString());
 
-                // Validate & Insert
-                if (letter.length() > 0 && name.length() > 0 && description.length() > 0 && sizeX > 0.0 && sizeY > 0.0 && coefficientX > 0.0 && coefficientY > 0.0 && speed > 0.0 && weight > 0.0) {
-                    /**
-                     * HardwareItem ammunitionItem = new HardwareItem(HardwareType.AMMUNITION, "A", "GAMO PBA Platinum", "4.5mm");
-                     *         ammunitionItem.setAmmunitionSpeed(350.00);
-                     *         ammunitionItem.setAmmunitionWeight(0.330);
-                     *
-                     *         ammunitionItem.setAmmunitionSizeMillisX(4.76);
-                     *         ammunitionItem.setAmmunitionSizeMillisY(4.76);
-                     *         ammunitionItem.setAmmunitionSizeMillisZ(6.43);
-                     *
-                     *         ammunitionItem.setAmmunitionDragCoefficientXValue(0.015);
-                     *         ammunitionItem.setAmmunitionDragCoefficientYValue(0.015);
-                     */
-
-                    switch (dialogMode) {
-                        case INSERT:
-                            HardwareItem ammunitionItem = new HardwareItem(HardwareType.AMMUNITION, null, letter, name, description);
-                            ammunitionItem.setAmmunitionSpeed(speed);
-                            ammunitionItem.setAmmunitionWeight(weight);
-                            ammunitionItem.setAmmunitionSizeMillisX(sizeX);
-                            ammunitionItem.setAmmunitionSizeMillisY(sizeY);
-                            ammunitionItem.setAmmunitionSizeMillisZ(0.0);
-                            ammunitionItem.setAmmunitionDragCoefficientXValue(coefficientX);
-                            ammunitionItem.setAmmunitionDragCoefficientYValue(coefficientY);
-                            databaseHelper.insertAmmunition(ammunitionItem);
-                            Toast.makeText(HardwareParameters.this, "New ammunition inserted", Toast.LENGTH_SHORT).show();
-                            break;
-                        case UPDATE:
-                            hardwareItem.setItemLetter(letter);
-                            hardwareItem.setItemName(name);
-                            hardwareItem.setItemDescription(description);
-                            hardwareItem.setAmmunitionSpeed(speed);
-                            hardwareItem.setAmmunitionWeight(weight);
-                            hardwareItem.setAmmunitionSizeMillisX(sizeX);
-                            hardwareItem.setAmmunitionSizeMillisY(sizeY);
-                            hardwareItem.setAmmunitionSizeMillisZ(0.0);
-                            hardwareItem.setAmmunitionDragCoefficientXValue(coefficientX);
-                            hardwareItem.setAmmunitionDragCoefficientYValue(coefficientY);
-                            databaseHelper.updateAmmunition(hardwareItem);
-                            Toast.makeText(HardwareParameters.this, hardwareItem.getItemName() + " updated!", Toast.LENGTH_SHORT).show();
-                            break;
-                    }
-                    getAmmunitions();
-                    dialog.dismiss();
-                } else {
-                    Toast.makeText(HardwareParameters.this, "All fields must be filled!", Toast.LENGTH_SHORT).show();
+            // Validate & Insert
+            if (letter.length() > 0 && name.length() > 0 && description.length() > 0 && sizeX > 0.0 && sizeY > 0.0 && coefficientX > 0.0 && coefficientY > 0.0 && speed > 0.0 && weight > 0.0) {
+                switch (dialogMode) {
+                    case INSERT:
+                        HardwareItem ammunitionItem = new HardwareItem(HardwareType.AMMUNITION, null, letter, name, description);
+                        ammunitionItem.setAmmunitionSpeed(speed);
+                        ammunitionItem.setAmmunitionWeight(weight);
+                        ammunitionItem.setAmmunitionSizeMillisX(sizeX);
+                        ammunitionItem.setAmmunitionSizeMillisY(sizeY);
+                        ammunitionItem.setAmmunitionSizeMillisZ(0.0);
+                        ammunitionItem.setAmmunitionDragCoefficientXValue(coefficientX);
+                        ammunitionItem.setAmmunitionDragCoefficientYValue(coefficientY);
+                        databaseHelper.insertAmmunition(ammunitionItem);
+                        Toast.makeText(HardwareParameters.this, "New ammunition inserted", Toast.LENGTH_SHORT).show();
+                        break;
+                    case UPDATE:
+                        hardwareItem.setItemLetter(letter);
+                        hardwareItem.setItemName(name);
+                        hardwareItem.setItemDescription(description);
+                        hardwareItem.setAmmunitionSpeed(speed);
+                        hardwareItem.setAmmunitionWeight(weight);
+                        hardwareItem.setAmmunitionSizeMillisX(sizeX);
+                        hardwareItem.setAmmunitionSizeMillisY(sizeY);
+                        hardwareItem.setAmmunitionSizeMillisZ(0.0);
+                        hardwareItem.setAmmunitionDragCoefficientXValue(coefficientX);
+                        hardwareItem.setAmmunitionDragCoefficientYValue(coefficientY);
+                        databaseHelper.updateAmmunition(hardwareItem);
+                        Toast.makeText(HardwareParameters.this, hardwareItem.getItemName() + " updated!", Toast.LENGTH_SHORT).show();
+                        break;
                 }
+                getAmmunitions();
                 dialog.dismiss();
+            } else {
+                Toast.makeText(HardwareParameters.this, "All fields must be filled!", Toast.LENGTH_SHORT).show();
             }
+            dialog.dismiss();
         });
-        dismissBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialog.dismiss();
-            }
-        });
+        dismissBtn.setOnClickListener(view -> dialog.dismiss());
     }
-
 
 
     // ---------------------------------------------------------------------------------------------
     /* Helpers */
-
 
 
     // Delete hardware confirmation dialog
@@ -384,19 +320,18 @@ public class HardwareParameters extends AppCompatActivity {
                 .setTitle("Delete")
                 .setMessage("Delete " + hardwareItem.getItemName())
                 .setIcon(R.mipmap.nitspec_circle_logo)
-                .setNegativeButton("Delete", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        switch (hardwareItem.getHardwareType()) {
-                            case GUN:
-                                databaseHelper.deleteGun(hardwareItem.getHardwareIdToString());
-                                getGuns();
-                                break;
-                            case AMMUNITION:
-                                databaseHelper.deleteAmmunition(hardwareItem.getHardwareIdToString());
-                                getAmmunitions();
-                                break;
-                        }
-                    }})
+                .setNegativeButton("Delete", (dialog, whichButton) -> {
+                    switch (hardwareItem.getHardwareType()) {
+                        case GUN:
+                            databaseHelper.deleteGun(hardwareItem.getHardwareIdToString());
+                            getGuns();
+                            break;
+                        case AMMUNITION:
+                            databaseHelper.deleteAmmunition(hardwareItem.getHardwareIdToString());
+                            getAmmunitions();
+                            break;
+                    }
+                })
                 .setNeutralButton("Return", null).show();
     }
 

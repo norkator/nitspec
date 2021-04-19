@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -74,7 +75,6 @@ public class BluetoothService extends Service {
     }
 
 
-
     // Connect to selected device
     public void connect(BluetoothDevice bluetoothDevice) {
         // Cancel any thread attempting to make a connection
@@ -118,6 +118,7 @@ public class BluetoothService extends Service {
     private class ConnectThread extends Thread {
         private BluetoothSocket mmSocket;
         private final BluetoothDevice mmDevice;
+
         ConnectThread(BluetoothDevice device) {
             mmDevice = device;
             BluetoothSocket bluetoothSocket = null;
@@ -129,6 +130,7 @@ public class BluetoothService extends Service {
             }
             mmSocket = bluetoothSocket;
         }
+
         public void run() {
             broadcastUpdate(ActionState.ACTION_CANCEL_DISCOVERY, ""); // Always cancel discovery because it will slow down a connection
             try { // Make a connection to the BluetoothSocket
@@ -137,9 +139,9 @@ public class BluetoothService extends Service {
                 Log.i(TAG, "*e1 Connection failed, trying with fallback " + e.getMessage());
                 try {
                     mmSocket = (BluetoothSocket) mmDevice.getClass().getMethod("createRfcommSocket",
-                            new Class[] {int.class}).invoke(mmDevice,1);
+                            new Class[]{int.class}).invoke(mmDevice, 1);
                     mmSocket.connect();
-                    Log.i(TAG,"Connected");
+                    Log.i(TAG, "Connected");
                 } catch (Exception e2) {
                     try {
                         Class<?> clazz = mmSocket.getRemoteDevice().getClass();
@@ -148,7 +150,7 @@ public class BluetoothService extends Service {
                         Object[] params = new Object[]{Integer.valueOf(1)};
                         mmSocket = (BluetoothSocket) m.invoke(mmSocket.getRemoteDevice(), params);
                         mmSocket.connect();
-                        Log.i(TAG,"Connected");
+                        Log.i(TAG, "Connected");
                     } catch (Exception e3) {
                         Log.i(TAG, "*e3 " + e3.getMessage());
                         Log.e(TAG, "Couldn't establish Bluetooth connection!");
@@ -170,6 +172,7 @@ public class BluetoothService extends Service {
             }
             connected(mmSocket, mmDevice); // Start the connected thread
         }
+
         void cancel() {
             try {
                 mmSocket.close();
@@ -179,7 +182,6 @@ public class BluetoothService extends Service {
             }
         }
     }
-
 
 
     public synchronized void connected(BluetoothSocket socket, BluetoothDevice device) {
@@ -217,6 +219,7 @@ public class BluetoothService extends Service {
             mmInStream = tmpIn;
             mmOutStream = tmpOut;
         }
+
         public void run() {
             byte[] buffer;
             ArrayList<Integer> arr_byte = new ArrayList<>();
@@ -251,6 +254,7 @@ public class BluetoothService extends Service {
                 }
             }
         }
+
         void write(byte[] buffer) { // Write to the connected OutStream.
             try {
                 mmOutStream.write(buffer); // Maybe should return sent message back to ui ?
@@ -258,6 +262,7 @@ public class BluetoothService extends Service {
             } catch (IOException ignored) {
             }
         }
+
         void cancel() {
             try {
                 mmSocket.close();

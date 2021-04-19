@@ -8,30 +8,29 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Vibrator;
-import android.preference.PreferenceManager;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.CardView;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.os.Vibrator;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.preference.PreferenceManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.nitramite.adapters.BluetoothDeviceItem;
 import com.nitramite.adapters.ClickListener;
@@ -45,7 +44,7 @@ import java.util.Set;
 public class MainMenu extends AppCompatActivity {
 
     // Logging
-    private static final String TAG = "MainMenu";
+    private static final String TAG = MainMenu.class.getSimpleName();
 
     // View components
     private TextView versionTV;
@@ -114,6 +113,7 @@ public class MainMenu extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) { // Bluetooth switch result
+        super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case REQUEST_ENABLE_BT:
                 Log.i(TAG, String.valueOf(resultCode));
@@ -178,76 +178,55 @@ public class MainMenu extends AppCompatActivity {
 
 
         // Bluetooth manager button control
-        manageBluetoothBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                vibrate();
-                audioPlayer.playSound(MainMenu.this, R.raw.pull_trigger);
-                if (sharedPreferences.getString(Constants.SP_SELECTED_BLUETOOTH_DEVICE_NAME, null) != null) {
-                    forgetBluetoothDeviceName();
-                } else {
-                    initializeBluetooth();
-                }
+        manageBluetoothBtn.setOnClickListener(view -> {
+            vibrate();
+            audioPlayer.playSound(MainMenu.this, R.raw.pull_trigger);
+            if (sharedPreferences.getString(Constants.SP_SELECTED_BLUETOOTH_DEVICE_NAME, null) != null) {
+                forgetBluetoothDeviceName();
+            } else {
+                initializeBluetooth();
             }
         });
 
         // Hardware manager to setup hardware specs
-        hardwareParametersBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                vibrate();
-                audioPlayer.playSound(MainMenu.this, R.raw.pull_trigger);
-                startActivity(new Intent(MainMenu.this, HardwareParameters.class));
-            }
+        hardwareParametersBtn.setOnClickListener(view -> {
+            vibrate();
+            audioPlayer.playSound(MainMenu.this, R.raw.pull_trigger);
+            startActivity(new Intent(MainMenu.this, HardwareParameters.class));
         });
 
         // Start camera system button
-        startCameraBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                vibrate();
-                audioPlayer.playSound(MainMenu.this, R.raw.pull_trigger);
-                startCamera();
-            }
+        startCameraBtn.setOnClickListener(view -> {
+            vibrate();
+            audioPlayer.playSound(MainMenu.this, R.raw.pull_trigger);
+            startCamera();
         });
 
         // Start button shoot system
-        btnShotBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                vibrate();
-                audioPlayer.playSound(MainMenu.this, R.raw.pull_trigger);
-                startBtnShoot();
-            }
+        btnShotBtn.setOnClickListener(view -> {
+            vibrate();
+            audioPlayer.playSound(MainMenu.this, R.raw.pull_trigger);
+            startBtnShoot();
         });
 
         // Nitramite contact form page
-        nitramiteBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                audioPlayer.playSound(MainMenu.this, R.raw.pull_trigger);
-                openWebsite("http://www.nitramite.com/contact.html");
-            }
+        nitramiteBtn.setOnClickListener(view -> {
+            audioPlayer.playSound(MainMenu.this, R.raw.pull_trigger);
+            openWebsite("http://www.nitramite.com/contact.html");
         });
 
         // Rate application
-        rateBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                audioPlayer.playSound(MainMenu.this, R.raw.pull_trigger);
-                openWebsite("https://play.google.com/store/apps/details?id=com.nitramite.nitspec");
-            }
+        rateBtn.setOnClickListener(view -> {
+            audioPlayer.playSound(MainMenu.this, R.raw.pull_trigger);
+            openWebsite("https://play.google.com/store/apps/details?id=com.nitramite.nitspec");
         });
 
 
         // Feature shop
-        shoppingCartBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                vibrate();
-                audioPlayer.playSound(MainMenu.this, R.raw.pull_trigger);
-                startActivity(new Intent(MainMenu.this, FeatureShop.class));
-            }
+        shoppingCartBtn.setOnClickListener(view -> {
+            vibrate();
+            audioPlayer.playSound(MainMenu.this, R.raw.pull_trigger);
+            startActivity(new Intent(MainMenu.this, FeatureShop.class));
         });
 
 
@@ -413,9 +392,7 @@ public class MainMenu extends AppCompatActivity {
                 new AlertDialog.Builder(MainMenu.this)
                         .setTitle(title)
                         .setMessage(description)
-                        .setPositiveButton("Close", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                            }
+                        .setPositiveButton("Close", (dialog, which) -> {
                         })
                         .setIcon(R.drawable.circle_hi_res)
                         .show();
@@ -437,9 +414,7 @@ public class MainMenu extends AppCompatActivity {
                 new AlertDialog.Builder(MainMenu.this)
                         .setTitle(title)
                         .setMessage(description)
-                        .setPositiveButton("Close", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                            }
+                        .setPositiveButton("Close", (dialog, which) -> {
                         })
                         .setIcon(R.drawable.circle_hi_res)
                         .show();
@@ -466,9 +441,7 @@ public class MainMenu extends AppCompatActivity {
         new AlertDialog.Builder(MainMenu.this)
                 .setTitle("Error")
                 .setMessage("No bluetooth supported")
-                .setPositiveButton("Close", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                    }
+                .setPositiveButton("Close", (dialog, which) -> {
                 })
                 .setIcon(R.mipmap.nitspec_circle_logo)
                 .show();
@@ -563,42 +536,5 @@ public class MainMenu extends AppCompatActivity {
             genericErrorDialog("Error", "Seems like you have no browser to open this website");
         }
     }
-
-
-    // ---------------------------------------------------------------------------------------------
-
-    /*
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if ((keyCode == KeyEvent.KEYCODE_BACK)) {
-            new AlertDialog.Builder(MainMenu.this)
-                    .setTitle("Close")
-                    .setMessage("Close application?")
-                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            if (bluetoothAdapter == null) {
-                                bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-                            }
-                            if (bluetoothAdapter != null) {
-                                if (bluetoothAdapter.isEnabled()) {
-                                    bluetoothAdapter.disable();
-                                }
-                            }
-                            MainMenu.this.finish();
-                        }
-                    })
-                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                        }
-                    })
-                    .setIcon(R.mipmap.nitspec_circle_logo)
-                    .show();
-        }
-        return super.onKeyDown(keyCode, event);
-    }
-    */
-
-    // ---------------------------------------------------------------------------------------------
 
 } // End of class

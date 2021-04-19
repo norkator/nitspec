@@ -2,7 +2,6 @@ package com.nitramite.nitspec;
 
 class Constants {
 
-
     // In app products
     static String IAP_ITEM_SKU_DONATE_MEDIUM = "iap_donate_medium";
     static String IAP_ITEM_SKU_BUTTON_SELECT_TARGET_AUTO_FIRE = "iap_button_select_target_auto_fire";
@@ -35,13 +34,5 @@ class Constants {
     static String SP_CAMERA_ANGLE_Y_AXIS_ZEROING_OFFSET = "SP_CAMERA_ANGLE_Y_AXIS_ZEROING_OFFSET";
     static String SP_CAMERA_ANGLE_X_AXIS_ZEROING_OFFSET = "SP_CAMERA_ANGLE_X_AXIS_ZEROING_OFFSET";
     static String SP_MANUAL_TARGET_RANGE_INPUT = "MANUAL_TARGET_RANGE_INPUT";
-
-    // ---------------------------------------------------------------------------------------------
-    /* Project resource links */
-
-    // OpenCV: https://android.jlelse.eu/a-beginners-guide-to-setting-up-opencv-android-library-on-android-studio-19794e220f3c
-
-
-    // ---------------------------------------------------------------------------------------------
 
 } // End of class

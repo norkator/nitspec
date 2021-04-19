@@ -22,8 +22,8 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="#66bb6a"
         android:textSize="35sp"
-        tools:ignore="HardcodedText,RtlSymmetry"
-        android:typeface="monospace" />
+        android:typeface="monospace"
+        tools:ignore="HardcodedText,RtlSymmetry" />
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -38,10 +38,10 @@
             android:layout_height="match_parent"
             android:gravity="center_vertical"
             android:text="Gamo IGT"
-            android:textSize="12sp"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            tools:ignore="HardcodedText,RtlSymmetry"
-            android:typeface="monospace" />
+            android:textSize="12sp"
+            android:typeface="monospace"
+            tools:ignore="HardcodedText,RtlSymmetry" />
 
         <TextView
             android:id="@+id/itemDescription"
@@ -51,8 +51,8 @@
             android:text="IGT Air rifle system"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textSize="10sp"
-            tools:ignore="HardcodedText,RtlSymmetry"
-            android:typeface="monospace" />
+            android:typeface="monospace"
+            tools:ignore="HardcodedText,RtlSymmetry" />
 
     </LinearLayout>
 

@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/card_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     app:cardCornerRadius="1dp"
     app:cardElevation="5dp"
-    app:cardUseCompatPadding="true" >
+    app:cardUseCompatPadding="true">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -25,35 +24,35 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="18sp"
-                android:padding="10dp"
                 android:background="@color/bootStrapPrimary"
+                android:padding="10dp"
                 android:text="Add gun"
                 android:textAlignment="center"
                 android:textColor="@color/colorWhite"
-                android:typeface="monospace"/>
+                android:textSize="18sp"
+                android:typeface="monospace" />
 
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="15sp"
-                android:layout_marginTop="5dp"
                 android:layout_marginStart="20dp"
+                android:layout_marginTop="5dp"
                 android:layout_marginEnd="20dp"
                 android:text="Give all following parameters\n(G = Letter)"
                 android:textAlignment="center"
+                android:textSize="15sp"
                 android:typeface="monospace" />
 
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
                 android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
                 android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp">
+                android:layout_marginEnd="20dp"
+                android:layout_marginBottom="10dp"
+                android:orientation="vertical">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -65,21 +64,21 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="G"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
                         android:textColor="#66bb6a"
                         android:textSize="30sp"
-                        android:textAppearance="?android:attr/textAppearanceMedium"
                         android:typeface="monospace" />
 
                     <EditText
                         android:id="@+id/nameInput"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Name"
                         android:layout_marginStart="10dp"
-                        android:textSize="25sp"
+                        android:hint="Name"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
                         android:textColor="@color/bootStrapPrimary"
                         android:textColorHint="@color/bootStrapPrimary"
-                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textSize="25sp"
                         android:typeface="monospace" />
 
                 </LinearLayout>
@@ -89,10 +88,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Description"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
                     android:textColor="@color/bootStrapPrimary"
                     android:textColorHint="@color/bootStrapPrimary"
-                    android:textSize="20sp"
-                    android:textAppearance="?android:attr/textAppearanceMedium" />
+                    android:textSize="20sp" />
 
             </LinearLayout>
 
@@ -107,18 +106,18 @@
                     style="@style/Widget.AppCompat.Button.Borderless.Colored"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="Dismiss"
                     android:textColor="#9e9e9e"
-                    android:textSize="15sp"
-                    android:text="Dismiss"/>
+                    android:textSize="15sp" />
 
                 <Button
                     android:id="@+id/proceedBtn"
                     style="@style/Widget.AppCompat.Button.Borderless.Colored"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="Proceed"
                     android:textColor="?colorPrimaryDark"
-                    android:textSize="15sp"
-                    android:text="Proceed" />
+                    android:textSize="15sp" />
 
             </LinearLayout>
 
@@ -126,4 +125,4 @@
 
     </ScrollView>
 
-</android.support.v7.widget.CardView>
+</androidx.cardview.widget.CardView>
