@@ -1,21 +1,36 @@
 package com.nitramite.nitspec;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.preference.PreferenceManager;
 
+import com.android.billingclient.api.AcknowledgePurchaseParams;
+import com.android.billingclient.api.AcknowledgePurchaseResponseListener;
 import com.android.billingclient.api.BillingClient;
+import com.android.billingclient.api.BillingClientStateListener;
+import com.android.billingclient.api.BillingFlowParams;
+import com.android.billingclient.api.BillingResult;
+import com.android.billingclient.api.Purchase;
+import com.android.billingclient.api.PurchaseHistoryRecord;
+import com.android.billingclient.api.PurchasesUpdatedListener;
+import com.android.billingclient.api.SkuDetailsParams;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @SuppressWarnings("FieldCanBeLocal")
-public class FeatureShop extends AppCompatActivity {
+public class FeatureShop extends AppCompatActivity implements PurchasesUpdatedListener {
 
+    // Logging
+    private static final String TAG = FeatureShop.class.getSimpleName();
 
     // In app billing
     private BillingClient mBillingClient;
@@ -47,7 +62,7 @@ public class FeatureShop extends AppCompatActivity {
         checkBoughtStates();
 
         // Init in app billing
-        // initInAppBilling();
+        initInAppBilling();
 
 
         donateMediumBtn.setOnClickListener(view -> {
@@ -67,7 +82,7 @@ public class FeatureShop extends AppCompatActivity {
 
         restoreBoughtBtn.setOnClickListener(view -> {
             audioPlayer.playSound(FeatureShop.this, R.raw.pull_trigger);
-            // restorePurchases();
+            restorePurchases();
         });
 
     } // End of onCreate()
@@ -76,17 +91,17 @@ public class FeatureShop extends AppCompatActivity {
     // ---------------------------------------------------------------------------------------------
     /* In app billing features */
 
-    /* TODO, MIGRATE !  MIGRATE !  MIGRATE !  MIGRATE !  MIGRATE !  MIGRATE !  MIGRATE !
 
     // Initialize in app billing feature
     private void initInAppBilling() {
-        // In app billing
-        mBillingClient = BillingClient.newBuilder(this).setListener(this).build();
+        mBillingClient = BillingClient.newBuilder(this).enablePendingPurchases().setListener(this).build();
         mBillingClient.startConnection(new BillingClientStateListener() {
             @Override
-            public void onBillingSetupFinished(@BillingClient.BillingResponse int billingResponseCode) {
-                if (billingResponseCode == BillingClient.BillingResponse.OK) {
+            public void onBillingSetupFinished(@NonNull BillingResult billingResult) {
+                if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK) {
+                    boolean ITEM_SKU_REMOVE_ADS_BOUGHT = false;
                     // The billing client is ready. You can query purchases here.
+                    final Purchase.PurchasesResult purchasesResult = mBillingClient.queryPurchases(BillingClient.SkuType.INAPP);
                 }
             }
 
@@ -98,9 +113,10 @@ public class FeatureShop extends AppCompatActivity {
         });
     }
 
+
     @Override
-    public void onPurchasesUpdated(int responseCode, @Nullable List<Purchase> purchases) {
-        if (responseCode == BillingClient.BillingResponse.OK && purchases != null) {
+    public void onPurchasesUpdated(BillingResult billingResult, @androidx.annotation.Nullable List<Purchase> purchases) {
+        if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK && purchases != null) {
             for (Purchase purchase : purchases) {
                 if (purchase.getSku().equals(Constants.IAP_ITEM_SKU_BUTTON_SELECT_TARGET_AUTO_FIRE)) {
                     setTargetAutoFireEnabled(false);
@@ -111,31 +127,64 @@ public class FeatureShop extends AppCompatActivity {
                 } else if (purchase.getSku().equals(Constants.IAP_ITEM_SKU_DONATE_MEDIUM)) {
                     Toast.makeText(FeatureShop.this, "Thank you for your donation!", Toast.LENGTH_LONG).show();
                 }
+                acknowledgePurchase(purchase);
             }
-        } else if (responseCode == BillingClient.BillingResponse.USER_CANCELED) {
+        } else if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.USER_CANCELED) {
             // Handle an error caused by a user cancelling the purchase flow.
+        } else if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.ITEM_ALREADY_OWNED && purchases != null) {
+            for (Purchase purchase : purchases) {
+                if (!purchase.isAcknowledged()) {
+                    acknowledgePurchase(purchase);
+                }
+            }
         } else {
             // Handle any other error codes.
         }
     }
-    */
 
-    // Donate action "purchase"
+
+    /**
+     * Acknowledge purchase required by billing lib >2.x++
+     *
+     * @param purchase billing purchase
+     */
+    private void acknowledgePurchase(Purchase purchase) {
+        AcknowledgePurchaseParams acknowledgePurchaseParams =
+                AcknowledgePurchaseParams.newBuilder()
+                        .setPurchaseToken(purchase.getPurchaseToken())
+                        .build();
+        mBillingClient.acknowledgePurchase(acknowledgePurchaseParams, acknowledgePurchaseResponseListener);
+    }
+
+    AcknowledgePurchaseResponseListener acknowledgePurchaseResponseListener = billingResult -> Toast.makeText(FeatureShop.this, "Purchase acknowledged!", Toast.LENGTH_SHORT).show();
+
+
     public void inAppPurchase(final String IAP_ITEM_SKU) {
-        //  if (mBillingClient.isReady()) {
-        //      BillingFlowParams flowParams = BillingFlowParams.newBuilder()
-        //              .setSku(IAP_ITEM_SKU)
-        //              .setType(BillingClient.SkuType.INAPP)
-        //              .build();
-        //      mBillingClient.launchBillingFlow(this, flowParams);
-        //  } else {
-        //      genericErrorDialog("Billing service", "Billing service is not initialized yet. Please try again.");
-        //      initInAppBilling();
-        //  }
+        if (mBillingClient.isReady()) {
+
+            List<String> skuList = new ArrayList<>();
+            skuList.add(IAP_ITEM_SKU);
+
+            SkuDetailsParams skuDetailsParams = SkuDetailsParams.newBuilder()
+                    .setSkusList(skuList).setType(BillingClient.SkuType.INAPP).build();
+
+            mBillingClient.querySkuDetailsAsync(skuDetailsParams, (billingResult, skuDetailsList) -> {
+                try {
+                    BillingFlowParams flowParams = BillingFlowParams.newBuilder()
+                            .setSkuDetails(skuDetailsList.get(0))
+                            .build();
+                    mBillingClient.launchBillingFlow(FeatureShop.this, flowParams);
+                } catch (IndexOutOfBoundsException e) {
+                    genericErrorDialog(getString(R.string.error), e.toString());
+                }
+            });
+        } else {
+            genericErrorDialog("Billing service", "Billing service is not initialized yet. Please try again.");
+            initInAppBilling();
+        }
     }
 
 
-    /*
     private void setTargetAutoFireEnabled(final Boolean isRestore) {
         SharedPreferences setSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         SharedPreferences.Editor editor = setSharedPreferences.edit();
@@ -155,34 +204,28 @@ public class FeatureShop extends AppCompatActivity {
         checkBoughtStates();
     }
 
-    */
+
     /* In app Restore purchases */
-    /*
     public void restorePurchases() {
-        mBillingClient.queryPurchaseHistoryAsync(BillingClient.SkuType.INAPP,
-                new PurchaseHistoryResponseListener() {
-                    @Override
-                    public void onPurchaseHistoryResponse(@BillingClient.BillingResponse int responseCode, List<Purchase> purchases) {
-                        if (responseCode == BillingClient.BillingResponse.OK && purchases != null) {
-                            if (purchases.size() > 0) {
-                                for (Purchase purchase : purchases) {
-                                    if (purchase.getSku().equals(Constants.IAP_ITEM_SKU_BUTTON_SELECT_TARGET_AUTO_FIRE)) {
-                                        setTargetAutoFireEnabled(true);
-                                    } else if (purchase.getSku().equals(Constants.IAP_ITEM_SKU_NIGHT_VISION_BASE)) {
-                                        setNightVisionEnabled(true);
-                                    }
-                                }
-                            } else {
-                                genericErrorDialog(getString(R.string.error), "No purchases made");
-                            }
-                        } else {
-                            genericErrorDialog(getString(R.string.error), "Error querying purchased items");
+        mBillingClient.queryPurchaseHistoryAsync(BillingClient.SkuType.INAPP, (billingResult, purchaseHistoryRecordList) -> {
+            if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK && purchaseHistoryRecordList != null) {
+                if (purchaseHistoryRecordList.size() > 0) {
+                    for (PurchaseHistoryRecord purchase : purchaseHistoryRecordList) {
+                        if (purchase.getSku().equals(Constants.IAP_ITEM_SKU_BUTTON_SELECT_TARGET_AUTO_FIRE)) {
+                            setTargetAutoFireEnabled(true);
+                        } else if (purchase.getSku().equals(Constants.IAP_ITEM_SKU_NIGHT_VISION_BASE)) {
+                            setNightVisionEnabled(true);
                         }
                     }
-                });
+                } else {
+                    genericErrorDialog(getString(R.string.error), "No purchases made");
+                }
+            } else {
+                genericErrorDialog(getString(R.string.error), "Error querying purchased items");
+            }
+        });
     }
 
-    */
 
     // ---------------------------------------------------------------------------------------------
 
@@ -199,9 +242,7 @@ public class FeatureShop extends AppCompatActivity {
                 new AlertDialog.Builder(FeatureShop.this)
                         .setTitle(title)
                         .setMessage(description)
-                        .setPositiveButton("Close", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                            }
+                        .setPositiveButton("Close", (dialog, which) -> {
                         })
                         .setIcon(R.mipmap.nitspec_circle_logo)
                         .show();
