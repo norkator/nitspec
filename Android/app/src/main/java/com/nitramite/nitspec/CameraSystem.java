@@ -437,8 +437,11 @@ public class CameraSystem extends AppCompatActivity implements CameraBridgeViewB
         if (zoomCameraView.setExposureCompensation(zoomCameraView.getMaxExposureCompensation())) {
             Toast.makeText(CameraSystem.this, "Exposure set", Toast.LENGTH_SHORT).show();
         }
-        if (zoomCameraView.setPreviewFpsRange(12000, 15000)) { // DO NOT HARD CODE; GET VIA FLATTEN
-            Toast.makeText(CameraSystem.this, "Fps min/max set", Toast.LENGTH_SHORT).show();
+        try {
+            if (zoomCameraView.setPreviewFpsRange(12000, 15000)) { // DO NOT HARD CODE; GET VIA FLATTEN
+                Toast.makeText(CameraSystem.this, "Fps min/max set", Toast.LENGTH_SHORT).show();
+            }
+        } catch (RuntimeException ignored) {
         }
 
         String[] flatten = zoomCameraView.getFlatten().split(";");
