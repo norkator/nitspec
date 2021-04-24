@@ -85,7 +85,7 @@ public class CameraSystem extends AppCompatActivity implements CameraBridgeViewB
     private TextView gammaLevelTV;
 
     private HorizontalWheelView manualTargetRangeAdjustWheel;
-    private Double manualTargetRangeAdjustPreviousValue = 0.0;
+    private double manualTargetRangeAdjustPreviousValue = 0.0;
 
 
     // Bluetooth and it's service
@@ -117,10 +117,10 @@ public class CameraSystem extends AppCompatActivity implements CameraBridgeViewB
 
 
     // Scope hardware sensor readings
-    private Double pressureReadingHehtoPascals = 0.0;
-    private Double temperatureCelsiusReading = 0.0;
-    private Double targetRangeMetersReading = 80.0;
-    private Double voltageReading = 0.0;
+    private double pressureReadingHehtoPascals = 0.0;
+    private double temperatureCelsiusReading = 0.0;
+    private double targetRangeMetersReading = 80.0;
+    private double voltageReading = 0.0;
 
     // Phone sensors
     private SensorManager sensorManager;
@@ -205,7 +205,15 @@ public class CameraSystem extends AppCompatActivity implements CameraBridgeViewB
             textToSpeech.stop();
             textToSpeech.shutdown();
         }
+        // Save last used target range meters
+        if (targetRangeMetersReading > 0) {
+            SharedPreferences setSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+            SharedPreferences.Editor editor = setSharedPreferences.edit();
+            editor.putInt(Constants.SP_MANUAL_TARGET_RANGE_LAST_VALUE, (int) targetRangeMetersReading);
+            editor.apply();
+        }
     }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -229,6 +237,8 @@ public class CameraSystem extends AppCompatActivity implements CameraBridgeViewB
         // Get services
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+
+
         CURRENT_MODE = ModeEnum.valueOf(sharedPreferences.getString(Constants.SP_MODE_ENUM, ModeEnum.BUTTON_MANUAL_FIRE_ONLY.name())); // Get string to mode enum
         SP_ENABLE_TRIGGER_SAFETY = sharedPreferences.getBoolean(Constants.SP_ENABLE_TRIGGER_SAFETY, true);
         SP_ENABLE_TTS_ENGINE = sharedPreferences.getBoolean(Constants.SP_ENABLE_TTS_ENGINE, true);
@@ -239,6 +249,10 @@ public class CameraSystem extends AppCompatActivity implements CameraBridgeViewB
         getUserGunHardwareParameters(); // Get selected ammunition params
         yAxisZeroing = sharedPreferences.getFloat(Constants.SP_CAMERA_ANGLE_Y_AXIS_ZEROING_OFFSET, 0.0f);
         xAxisZeroing = sharedPreferences.getFloat(Constants.SP_CAMERA_ANGLE_X_AXIS_ZEROING_OFFSET, 0.0f);
+
+        if (SP_MANUAL_TARGET_RANGE_INPUT) {
+            targetRangeMetersReading = (double) sharedPreferences.getInt(Constants.SP_MANUAL_TARGET_RANGE_LAST_VALUE, (int) targetRangeMetersReading);
+        }
 
         // Check for bluetooth device
         if (sharedPreferences.getString(Constants.SP_SELECTED_BLUETOOTH_DEVICE_NAME, null) == null) {
