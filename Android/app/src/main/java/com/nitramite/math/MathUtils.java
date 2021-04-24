@@ -7,7 +7,7 @@ public class MathUtils {
 
 
     // Logging
-    private static final String TAG = "MathUtils";
+    private static final String TAG = MathUtils.class.getSimpleName();
 
 
     /**
